@@ -1,0 +1,148 @@
+Поліморфізм – здатність об'єкта набувати безліч різних форм. Найбільш поширене використання поліморфізму в ОВП відбувається, коли посилання батьківський клас використовується посилання на об'єкт дочірнього класу. Постараємося розібратися з поняттям поліморфізму Java простими словами, так би мовити для чайників.
+
+Будь-який об'єкт Java, який може пройти більше одного тесту IS-A вважається поліморфним. У Java всі об'єкти поліморфні, тому що будь-який об'єкт пройде тест IS-A для свого власного типу та для класу Object.
+
+Важливо знати, що отримати доступ до об'єкта можна тільки через змінну. Посилальна змінна може бути лише одного типу. Будучи оголошеною, тип посилальної змінної змінити не можна.
+
+Змінну змінну можна перепризначити до інших об'єктів, які не оголошені як final. Тип змінної посилання визначає методи, які вона може викликати на об'єкті.
+
+Посилальна змінна може звернутися до будь-якого об'єкта свого оголошеного типу або до будь-якого підтипу свого оголошеного типу. Змінну змінну можна оголосити як клас або тип інтерфейсу.
+
+
+		~Приклад 1
+Розглянемо приклад успадкування поліморфізму в Java.
+
+public interface Vegetarian{}
+public class Animal{}
+public class Deer extends Animal implements Vegetarian{}
+Тепер клас Deer (Олень) вважається поліморфним, оскільки він має множину спадкування. Наступні твердження вірні для прикладу вище:
+
+A Deer IS-A Animal (олень – це тварина);
+A Deer IS-A Vegetarian (олень – це вегетаріанець);
+A Deer IS-A Deer (олень – це олень);
+A Deer IS-A Object (олень – це об'єкт).
+
+Коли ми застосовуємо факти посилальної змінної до посилання на об'єкт Deer (Олень), такі твердження вірні:
+
+		~Приклад 2
+Deer d = new Deer();
+Animal a = d;
+Vegetarian v = d;
+Object o = d;
+
+Усі змінні (d, a, v, o) посилаються до того ж об'єкту Deer (Олень).
+
+		~Віртуальні методи
+У цьому розділі розглянемо, як поведінка перевизначених методів Java дозволяє скористатися перевагами поліморфізму при оформленні класів.
+
+Ми вже розглянули переопреденіе методів , де дочірній клас може перевизначити метод свого «батька». Перевизначений метод прихований у батьківському класі і не викликаний, поки дочірній клас не використовує ключове слово super під час перевизначення методу.
+	Приклад
+/* File name : Employee.java */
+public class Employee {
+   private String name;
+   private String address;
+   private int number;
+
+   public Employee(String name, String address, int number) {
+      System.out.println("Собираем данные о работнике");
+      this.name = name;
+      this.address = address;
+      this.number = number;
+   }
+
+   public void mailCheck() {
+      System.out.println("Отправляем чек " + this.name + " " + this.address);
+   }
+
+   public String toString() {
+      return name + " " + address + " " + number;
+   }
+
+   public String getName() {
+      return name;
+   }
+
+   public String getAddress() {
+      return address;
+   }
+
+   public void setAddress(String newAddress) {
+      address = newAddress;
+   }
+
+   public int getNumber() {
+      return number;
+   }
+}
+
+Тепер припустимо, що ми успадковуємо клас Employee так:
+
+/* File name : Salary.java */
+public class Salary extends Employee {
+   private double salary; // Годовая заработная плата
+   
+   public Salary(String name, String address, int number, double salary) {
+      super(name, address, number);
+      setSalary(salary);
+   }
+   
+   public void mailCheck() {
+      System.out.println("Внутри mailCheck класса Salary ");
+      System.out.println("Отправляем чек " + getName()
+      + " с зарплатой " + salary);
+   }
+   
+   public double getSalary() {
+      return salary;
+   }
+   
+   public void setSalary(double newSalary) {
+      if(newSalary >= 0.0) {
+         salary = newSalary;
+      }
+   }
+   
+   public double computePay() {
+      System.out.println("Вычисляем заработную плату для " + getName());
+      return salary/52;
+   }
+}
+
+Тепер, уважно вивчіть програму та спробуйте передбачити її висновок:
+
+/* File name : VirtualDemo.java */
+public class VirtualDemo {
+
+   public static void main(String [] args) {
+      Salary s = new Salary("Олег Петров", "Минск, Беларусь", 3, 3600.00);
+      Employee e = new Salary("Иван Иванов", "Москва, Россия", 2, 2400.00);
+      System.out.println("Вызываем mailCheck, используя ссылку Salary --");   
+      s.mailCheck();
+      System.out.println("Вызываем mailCheck, используя ссылку Employee --");
+      e.mailCheck();
+   }
+}
+
+Після запуску програми буде видано такий результат:
+
+Збираємо дані про працівника
+Збираємо дані про працівника
+
+Викликаємо mailCheck, використовуючи посилання Salary ––
+Всередині mailCheck класу Salary 
+Відправляємо чек Олег Петров із зарплатою 3600.0
+
+Викликаємо mailCheck, використовуючи посилання Employee ––
+Всередині mailCheck класу Salary
+Відправляємо чек Іван Іванов із зарплатою 2400.0
+
+
+Отже, ми створили два об'єкти Salary. Один використовує посилання Salary, тобто s , а інший використовує посилання Employee, тобто e .
+
+Під час виклику s.mailCheck(), компілятор бачить mailCheck() у класі Salary під час компіляції, а JVM викликає mailCheck() у класі Salary під час запуску програми.
+
+mailCheck() у e зовсім інше, тому що e є посиланням Employee. Коли компілятор бачить e.mailCheck(), компілятор бачить метод mailCheck() у класі Employee.
+
+Під час компіляції був використаний mailCheck() у Employee, щоб перевірити це твердження. Однак під час запуску програми JVM викликає mailCheck() у класі Salary.
+
+Ця поведінка називається викликом віртуальних методів, а ці методи називаються віртуальними. Перевизначений метод викликається під час запуску програми, незалежно від того, який тип даних був використаний у вихідному коді під час компіляції.

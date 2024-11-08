@@ -1,0 +1,7 @@
+● Кей С. Хорстманн (2014). Java SE 8. Вводный курс. «Вільямс». ISBN 978-5-8459-1900-7.
+● Фрэд Лонг та ін. (2014). Руководство для программиста на Java: 75 рекомендаций по написанию надежных и защищенных программ. «Вільямс». ISBN 978-5-8459-1897-0.
+● Кей С. Хорстманн, Гари Корнелл (2013). Java. Библиотека профессионала, том 1. Основы. 9-е издание. «Вільямс». ISBN 978-5-8459-1869-7.
+● Барри Берд (2013). Программирование на Java для чайников, 3-е издание. «Діалектика». ISBN 978-5-8459-1834-5.
+● Bruce Eckel (2006). Thinking in Java (4th Edition). Prentice Hall PTR. ISBN 978-0131872486.
+● Joshua Bloch (2008). Effective Java (2nd Edition). Prentice Hall PTR. ISBN 978-0321356680.
+● James Gosling; Bill Joy, Guy Steele, Gilad Bracha (2005). The Java Language Specification, Third Edition. Addison-Wesley. ISBN 0-321-24678-0.

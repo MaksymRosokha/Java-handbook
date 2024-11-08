@@ -1,0 +1,181 @@
+Абстракція – це якість спілкування з ідеями, а не з подіями. Наприклад, у випадку з e-mail, докладні деталі про те, що відбувається під час відправки e-mail, що використовується протокол сервером e-mail - все це приховано від користувача. Тим не менш, для відправки e-mail вам достатньо надрукувати вміст, адресу одержувача та натиснути "надіслати".
+
+Так і в об'єктно-орієнтованому програмуванні: абстракція – це приховування деталей реалізації від користувача, надаючи йому лише функціонал. Іншими словами, користувач володітиме інформацією про те, що об'єкт робить, а не як він це робить.
+
+У Java абстракція досягається з використанням абстрактних класів та інтерфейсів.
+
+
+		~Абстрактний клас
+Клас, який під час оголошення містить ключове слово abstract, відомий як абстрактний клас.
+
+•Абстрактні класи Java можуть містити або містити абстрактні методи, тобто. методи без тіла (public void get();)
+•Якщо клас має хоча б один абстрактний метод, то клас має бути оголошений абстрактним.
+•Якщо клас оголошено абстрактним, його не можна реалізувати.
+•Щоб використати абстрактний клас, вам потрібно успадкувати його з іншого класу, забезпечити реалізацію абстрактних методів у ньому.
+•Якщо ви успадкуєте абстрактний клас Java, вам потрібно забезпечити реалізацію всіх абстрактних методів у ньому.
+	Приклад
+Цей розділ показує приклад абстрактного класу. Щоб створити абстрактний клас, просто використовувати ключове слово abstract перед ключовим словом class під час оголошення класу.
+
+/* File name : Employee.java */
+public abstract class Employee {
+   private String name;
+   private String address;
+   private int number;
+
+   public Employee(String name, String address, int number) {
+      System.out.println("Собираем данные о работнике");
+      this.name = name;
+      this.address = address;
+      this.number = number;
+   }
+   
+   public double computePay() {
+     System.out.println("Внутри Employee computePay");
+     return 0.0;
+   }
+   
+   public void mailCheck() {
+      System.out.println("Отправляем чек " + this.name + " " + this.address);
+   }
+
+   public String toString() {
+      return name + " " + address + " " + number;
+   }
+
+   public String getName() {
+      return name;
+   }
+ 
+   public String getAddress() {
+      return address;
+   }
+   
+   public void setAddress(String newAddress) {
+      address = newAddress;
+   }
+ 
+   public int getNumber() {
+      return number;
+   }
+}
+
+Ви можете спостерігати, що крім абстрактних методів клас Employee такий самий, як і звичайний клас Java. Клас тепер абстрактний, але він все ще має три поля, сім методів та один конструктор.
+
+Тепер спробуйте створити екземпляр класу Employee таким чином:
+
+/* File name : AbstractDemo.java */
+public class AbstractDemo {
+
+   public static void main(String [] args) {
+      /* Наступні дії невірні та видадуть помилку */
+      Employee e = new Employee ("Іванов І.І.", "Мінськ, Білорусь", 43);
+      System.out.println("\n Викликаємо mailCheck, використовуючи посилання Employee --");
+      e.mailCheck();
+   }
+}
+
+При спробі компіляції вищенаведеного класу ви отримаєте таку помилку:
+
+Employee.java:46: Employee is abstract; cannot be instantiated
+      Employee e = new Employee ("Іванов І.І.", "Мінськ, Білорусь", 43);
+                   ^
+1 error
+Спадкування абстрактного класу
+Розглянемо спадковість абстрактного класу Java на прикладі. Ви можете успадкувати клас Employee, як конкретний клас, так:
+	Приклад
+/* File name : Salary.java */
+public class Salary extends Employee {
+   private double salary; // Річна вести
+   
+   public Salary(String name, String address, int number, double salary) {
+      super(name, address, number);
+      setSalary(salary);
+   }
+   
+   public void mailCheck() {
+      System.out.println("Усередині mailCheck класу Salary ");
+      System.out.println("Відправляємо чек" + getName() + "з зарплатою" + salary);
+   }
+ 
+   public double getSalary() {
+      return salary;
+   }
+   
+   public void setSalary(double newSalary) {
+      if(newSalary >= 0.0) {
+         salary = newSalary;
+      }
+   }
+   
+   public double computePay() {
+      System.out.println("Обчислюємо заробітну плату для" + getName());
+      return salary/52;
+   }
+}
+
+Тут ви не можете створити примірник класу Employee, але ви можете створити примірник класу Salary, використовуючи який ви зможете отримати доступ до всіх трьох полів та семи методів класу Employee, як у прикладі нижче.
+
+/* File name : AbstractDemo.java */
+public class AbstractDemo {
+
+   public static void main(String [] args) {
+      Salary s = new Salary ("Петров П.П.", "Москва, Росія", 3, 3600.00);
+      Employee e = new Salary ("Смирнов О.І.", "Смоленськ, Росія", 2, 2400.00);
+      System.out.println("Викликаємо mailCheck, використовуючи посилання Salary --");
+      s.mailCheck();
+      System.out.println("\n Викликаємо mailCheck, використовуючи посилання Employee --");
+      e.mailCheck();
+   }
+}
+
+Після запуску програми буде видано такий результат:
+
+Збираємо дані про працівника
+Збираємо дані про працівника
+
+Викликаємо mailCheck, використовуючи посилання Salary ––
+Всередині mailCheck класу Salary
+Відправляємо чек Петров П.П. із зарплатою 3600.0
+
+Викликаємо mailCheck, використовуючи посилання Employee ––
+Всередині mailCheck класу Salary
+Відправляємо чек Смирнов О.І. із зарплатою 2400.0
+
+
+
+		~Абстрактний метод
+Якщо ви хочете, щоб клас містив конкретний метод, але бажаєте, щоб фактична реалізація цього методу визначалася дочірніми класами, ви можете оголосити метод у батьківському класі як абстрактний
+
+•Ключове слово abstract використовується для оголошення абстрактним способом.
+•Вам потрібно розмістити ключове слово abstract перед ім'ям методу під час його оголошення.
+•Абстрактний метод Java містить сигнатуру методу, але не містить тіла методу.
+•Замість фігурних дужок у абстрактного методу буде точка з комою (;) на кінці.
+
+Розглянемо приклад абстрактного методу Java.
+	Приклад
+public abstract class Employee {
+   private String name;
+   private String address;
+   private int number;
+   
+   public abstract double computePay();
+   // Залишок визначення класу
+}
+Оголошення методом абстрактним веде до двох наслідків:
+•Клас, що містить його, має бути оголошений абстрактним.
+•Будь-який клас, який успадковує поточний клас, повинен або перевизначити абстрактний метод, або оголосити собі абстрактним.
+
+Примітка. Зрештою, клас-нащадок повинен реалізувати абстрактний метод, інакше у вас буде ієрархія абстрактних класів, примірники яких не можна буде створити.
+
+Припустимо, що клас Salary успадковує клас Employee, тоді він має реалізувати метод computePay() , як показано нижче:
+
+/* File name : Salary.java */
+public class Salary extends Employee {
+   private double salary; // Річна вести
+  
+   public double computePay() {
+      System.out.println("Обчислюємо заробітну плату для" + getName());
+      return salary/52;
+   }
+   // Залишок визначення класу
+}

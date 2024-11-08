@@ -1,0 +1,256 @@
+Java надає клас Date, який доступний у пакеті java.util, цей клас містить у собі поточну дату та час.
+
+		~Конструктори
+Клас Date підтримує два конструктори, які показані нижче.
+
+№	Конструктор та опис
+1	Date()
+	Цей конструктор ініціалізує об'єкт із поточною датою та часом.
+2	Date(long millisec)
+	Цей конструктор приймає аргумент рівний числу мілісекунд, що минули з півночі 1 січня 1970 року.
+
+
+		~Методи класу Date
+Нижче наведені методи класу Date.
+
+№	Методи з описом
+1	boolean after(Date date)
+	Повертає значення true, якщо об'єкт date, що викликає, містить дату, яка раніше заданої дати, в іншому випадку він повертає значення false.
+2	boolean before(Date date)
+	Повертає значення true, якщо об'єкт, що викликає, date містить дату, більш ранню, ніж задана дата, в іншому випадку він повертає значення false.
+3	Object clone ()
+	Дублювання об'єкта, що викликає, date.
+4	int compareTo(Date date)
+	Порівнює значення об'єкта, що викликає, з цією датою. Повертає 0, якщо значення дорівнюють. Повертає негативне значення, якщо об'єкт виклику є більш раннім, ніж дата. Повертає позитивне значення, якщо об'єкт виклику є пізніше дати.
+5	int compareTo(Object obj)
+	Працює так само compareTo(Date), якщо об'єкт виклику має клас Date. В іншому випадку викликає ClassCastException.
+6	boolean equals(Object date)
+	Повертає значення true, якщо об'єкт date, що викликає, містить той же час і дату, яка вказана в date, в іншому випадку він повертає значення false.
+7	long getTime()
+	Повертає кількість мілісекунд, що минули з 1 січня 1970 року.
+8	int hashCode()
+	Повертає хеш-код для об'єкта, що викликає.
+9	void setTime(long time)
+	Задає дату і час, що відповідають моменту часу, що є загальним витраченим часом у мілісекундах від півночі 1 січня 1970 року.
+10	String toString()
+	Перетворює об'єкт, що викликає, date в рядок і повертає результат.
+
+
+		~Поточна дата та час у Java
+Отримати поточну дату і час у Java досить легко. Ви можете використовувати простий об'єкт date разом з методом toString() , щоб вивести поточну дату та час наступним чином:
+
+import java.util.Date;
+
+public class Test {
+
+   public static void main(String args[]) {
+      // Ініціалізація об'єкта date
+      Date date = new Date();
+
+      // Виведення поточної дати та часу з використанням toString()
+      System.out.println(date.toString());
+   }
+}
+Отримаємо наступний результат:
+
+Sun Nov 16 00:14:19 FET 2021
+
+
+		~Перетворення рядка на дату
+Клас SimpleDateFormat має деякі додаткові методи, зокрема parse(), який Java допоможе нам перевести рядок в дату відповідно до формату, що зберігається в даному об'єкті SimpleDateFormat. Наприклад:
+
+import java.util.*;
+import java.text.*;
+  
+public class Test {
+
+    public static void main(String args[]) {
+       SimpleDateFormat ft = новий SimpleDateFormat ("yyyy-MM-dd");
+       String str = args.length == 0? "2011-11-11": args [0];
+
+       System.out.print("Рядок " + str + " розпаршена як ");
+       Date parsingDate;
+       try {
+          parsingDate = ft.parse(str);
+          System.out.println(parsingDate);
+       } catch (ParseException e) {
+          System.out.println("Нераспаршена за допомогою "+ ft);
+       }
+    }
+}
+Отримаємо наступний результат:
+
+Рядок 2011-11-11 розпаршено як Fri Nov 11 00:00:00 FET 2011
+
+
+		~Час виконання програми
+Досить просто можна дізнатися про час виконання коду вашої програми за допомогою System.currentTimeMillis(). Для цього необхідно на початку програми записати змінну значення System.currentTimeMillis(), а в кінці відняти з поточного значення System.currentTimeMillis() змінну, записану спочатку. Розглянемо приклад, у якому виміряємо швидкість роботи коду програми, що виводить 10 випадкових чисел на екран.
+
+import java.util.*;
+  
+public class Test {
+   public static void main(String args[]) {
+      // Початки відліку
+      long start = System.currentTimeMillis();
+        
+      // Код програми. Отримання 10 випадкових чисел від 0 до 9 та виведення на екран
+      for(int i = 1; i <= 10; i++) {
+          System.out.println("Випадкове число №" + i + ": " + (int)(Math.random() * 10));
+      }
+
+      // Отримання та запис у змінну timeWorkCode часу роботи програми
+      long timeWorkCode = System.currentTimeMillis() - start;
+      // Виведення часу виконання роботи коду на екран
+      System.out.println("Швидкість виконання програми: " + timeWorkCode + " мілісекунд");
+   }
+}
+Отримаємо наступний результат:
+
+Випадкове число №1: 0
+Випадкове число №2: 5
+Випадкове число №3: 9
+Випадкове число №4: 9
+Випадкове число №5: 0
+Випадкове число №6: 2
+Випадкове число №7: 0
+Випадкове число №8: 3
+Випадкове число №9: 5
+Випадкове число №10: 9
+Швидкість виконання програми: 2 мілісекунд
+
+
+		~Різниця дат у Java
+Іноді може знадобитися розрахувати різницю між датами, виміряти точку години в мілісекундах. Тому давайте перепишемо ще раз приклад, який перебуває вище:
+
+import java.util.*;
+
+public class Test {
+
+   public static void main(String args[]) {
+      try {
+         long start = System.currentTimeMillis();
+         System.out.println(new Date() + "\n");
+         
+         Thread.sleep(10000);
+         System.out.println(new Date() + "\n");
+         
+         long end = System.currentTimeMillis();
+         long diff = end – start;
+         System.out.println("Різниця між датами: "+diff+" мілісекунд");
+      } catch (Exception e) {
+         System.out.println("Отримали виняток!");
+      }
+   }
+}
+Отримаємо наступний результат:
+
+Sun Nov 13 03:22:10 FET 2016
+
+Sun Nov 13 03:22:20 FET 2016
+
+Різниця між датами: 10081 мілісекунд
+
+
+		~Кількість днів між датами
+А іноді Вам може знадобитися Java дізнатися кількість днів, годин, хвилин тощо. між датами. Розглянемо один із способів знаходження днів між двома датами нижче у прикладі:
+
+import java.util.*;
+
+public class Test {
+
+   public static void main(String args[]) {
+      String date1 = "01.03.2016";
+      String date2 = "01.02.2016";
+        
+      SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+        
+      Date dateOne = null;
+      Date dateTwo = null;
+        
+      try {
+          dateOne = format.parse(date1);
+          dateTwo = format.parse(date2);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+        
+      //Кількість днів між датами в мілісекундах
+      long difference = dateOne.getTime() - dateTwo.getTime();
+      // Переведення кількості днів між датами з мілісекунд у дні
+      int days = (int) (difference / (24 * 60 * 60 * 1000)); // Мілісекунди / (24ч * 60хв * 60сек * 1000мс)
+      // Висновок різниці між датами днями на екран
+      System.out.println(days + "дн.");
+   }
+}
+Отримаємо наступний результат:
+
+29 дн.
+
+
+
+		~Приклад 1: виведення поточної дати та години, високосний рік
+import java.util.*;
+
+public class Test {
+
+   public static void main(String args[]) {
+      String months[] = {"Янв", "Фев", "Березень", "Апр", "Май", "Червень", "Липень", "Авг", "Сен",
+         "Окт", "Ноя", "Дек"};
+      
+      int year;
+      // Створення григоріанського календаря ініціалізованого
+      // поточною датою та часом у
+      // локалізації та часовому поясі за умовчанням.
+      
+      GregorianCalendar gcalendar = новий GregorianCalendar();
+      
+      // Висновок реального часу та дати
+      System.out.print("Дата: ");
+      System.out.print(months[gcalendar.get(Calendar.MONTH)]);
+      System.out.print(" " + gcalendar.get(Calendar.DATE) + " ");
+      System.out.println(year = gcalendar.get(Calendar.YEAR));
+      System.out.print("Час: ");
+      System.out.print(gcalendar.get(Calendar.HOUR) + ":");
+      System.out.print(gcalendar.get(Calendar.MINUTE) + ":");
+      System.out.println(gcalendar.get(Calendar.SECOND));
+
+      // Тест якщо поточний рік високосний
+      if(gcalendar.isLeapYear(year)) {
+         System.out.println(year + "- високосний рік");
+      }else {
+         System.out.println(year + "- не високосний рік");
+      }
+   }
+}
+Отримаємо наступний результат:
+
+Дата: Лис 13 2016
+Час: 2:31:18
+2016 – високосний рік
+Для вивчення повного списку констант у класі календаря зверніться до стандартної документації Java.
+
+
+		~Приклад 2: отримати день тижня за датою
+import java.util.*;
+
+public class Test {
+
+   public static void main(String args[]) {
+      String date = "17.11.2016";
+        
+      // Перекладаємо рядок на дату
+      SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+      Date dayWeek = null;
+      try {
+          dayWeek = format.parse(date);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      
+      // Виведення дня тижня дати на екран
+      System.out.println(new SimpleDateFormat("EEEE").format(dayWeek));
+   }
+}
+Отримаємо наступний результат:
+
+четвер

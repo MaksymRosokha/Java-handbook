@@ -1,0 +1,412 @@
+		~Мережа
+Термін " мережне програмування " відноситься до написання програм, які виконуються на декількох пристроях (комп'ютерах), в яких всі пристрої підключені один до одного за допомогою мережі.
+
+Пакет java.net набору інтерфейсів прикладного програмування J2SE містить набір класів та інтерфейсів, які надають детальну інформацію про низькорівневу взаємодію, що дозволяє писати програми, орієнтовані на вирішення існуючої проблеми.
+
+
+		~Протоколи TCP та UDP
+Пакет java.net забезпечує підтримку двох загальних мережевих протоколів:
+•TCP – TCP – це протокол управління передачею, який забезпечує надійний зв'язок між двома додатками. Java TCP зазвичай використовується через Інтернет-протокол, який називається TCP/IP.
+•UDP - UDP - це протокол дейтаграм користувача, протокол без встановлення з'єднання, який дозволяє передавати пакети даних між додатками.
+
+Цей розділ належним чином розкриває такі дві теми:
+•Програмування сокетів - це найбільш широко використовувана концепція мережної конфігурації, про яку було докладно викладено.
+•Обробка URL (уніфікований покажчик ресурсів) – цей процес буде розглянуто окремо. Перейдіть на посилання, щоб дізнатися про обробку URL на мові Java .
+
+
+		~Програмування сокетів
+У Java сокети забезпечують механізм зв'язку між двома комп'ютерами, які використовують TCP. Клієнтська програма створює сокет на своєму кінці зв'язку та намагається підключити цей сокет до сервера.
+
+Коли з'єднання встановлено, сервер створює об'єкт сокета на кінці зв'язку. Клієнт і сервер тепер можуть спілкуватися, записуючи та зчитуючи дані із сокету.
+
+Клас java.net.Socket є сокетом, а клас java.net.ServerSocket надає механізм серверної програми для прослуховування клієнтів і встановлення з'єднань з ними.
+
+При встановленні з'єднання TCP між двома комп'ютерами з використанням сокетів виконуються такі етапи:
+•Сервер створює екземпляр об'єкта ServerSocket, що визначає, за яким номером порту має відбуватися зв'язок.
+•Сервер викликає метод accept() класу ServerSocket. Цей метод очікує, доки клієнт не підключиться до сервера за вказаним портом.
+•Після завершення очікування сервера клієнт створює екземпляр об'єкта сокета, вказуючи ім'я сервера та номер порту підключення.
+•Конструктор класу Socket здійснює спробу підключити клієнта до вказаного сервера та номера порту. Якщо зв'язок встановлений, клієнт має тепер об'єкт Socket, здатний зв'язуватися з сервером.
+•На стороні сервера метод accept() повертає посилання на новий сокет на сервері, який підключений до клієнтського сокету.
+
+Після встановлення з'єднання зв'язок може відбуватися з використанням потоків вхідних/вихідних даних. Кожен сокет має і OutputStream (потік вихідних даних), і InputStream (потік вхідних даних). OutputStream клієнта підключений до сервера InputStream, а InputStream клієнта підключений до сервера OutputStream.
+
+TCP є двостороннім протоколом зв'язку, тому дані можуть передаватися з обох потоків одночасно. Нижче наведені корисні класи, що надають повний набір методів застосування сокетів.
+
+
+		~Конструктори класу ServerSocket
+Клас java.net.ServerSocket використовується серверними програмами для отримання порту та прослуховування клієнтських запитів.
+
+Клас ServerSocket має чотири конструктори:
+
+№	Конструктор та опис
+1	Public ServerSocket(int port) throws IOException
+	Спроби створення серверного сокету, пов'язаного із зазначеним портом. Виняток відбувається, якщо порт вже пов'язаний з іншим додатком.
+2	Public ServerSocket(int port, int backlog) throws IOException
+	Як і в попередньому конструкторі, параметр backlog вказує, скільки вхідних клієнтів потрібно зберегти в черзі очікування.
+3	Public ServerSocket(int port, int backlog, InetAddress address) throws IOException
+	Як і в попередньому конструкторі, параметр InetAddress вказує локальну IP-адресу для здійснення прив'язки. InetAddress використовується в серверах, які можуть мати кілька IP-адрес, що дозволяє серверу вказувати IP-адресу прийому запитів клієнтів.
+4	public ServerSocket() throws IOException
+	Створює неприв'язаний сокет сервера. При використанні цього конструктора використовуйте метод прив'язки (), коли ви будете готові прив'язати сокет сервера.
+
+Якщо конструктор ServerSocket не видає виняток, це означає, що ваш додаток успішно пов'язаний із зазначеним портом і готовий до клієнтських запитів.
+
+
+		~Методи класу ServerSocket
+Нижче наведено деякі з найпоширеніших методів Java класу ServerSocket.
+
+№	Методи та опис
+1	public int getLocalPort()
+	Повертає порт, який прослуховує сокет сервера. Цей метод корисний, якщо ви передали 0 як номер порту в конструкторі і дозволили серверу знайти порт.
+2	public Socket accept() throws IOException
+	Очікує вхідного клієнта. Цей метод блокується доти, доки клієнт не підключиться до сервера на вказаному порту або закінчиться час очікування сокету, за умови, що значення часу очікування було встановлено за допомогою методу setSoTimeout(). В іншому випадку цей метод блокується на невизначений термін.
+3	public void setSoTimeout(int timeout)
+	Встановлює значення часу очікування клієнта сокетом сервера під час accept().
+4	public void bind (хост SocketAddress, int backlog)
+	Прив'язує сокет до зазначеного сервера та порту в об'єкті SocketAddress. Використовуйте цей метод, якщо ви створили ServerSocket за допомогою архітектора без аргументів.
+
+Коли ServerSocket викликає accept(), метод не повертається, доки клієнт не підключиться. Після того, як клієнт все-таки підключиться, ServerSocket створює новий сокет для порту і повертає посилання на цей новий сокет. Тепер між клієнтом і сервером існує з'єднання TCP, і зв'язок може встановитися.
+
+		~Конструктори класу Socket
+Клас java.net.Socket є сокетом, який клієнт і сервер використовують для зв'язку один з одним. Клієнт отримує об'єкт сокета, створивши його, тоді як сервер отримує об'єкт сокету з значення методу accept(), що повертається.
+
+Клас Socket має п'ять конструкторів, які клієнт використовує для підключення до сервера.
+
+№	Конструктор та опис
+1	public Socket(String host, int port) throws UnknownHostException, IOException.
+	Цей метод робить спробу підключення до вказаного сервера через вказаний порт. Якщо цей конструктор не видає виняток, з'єднання встановлено успішно, і клієнт підключений до сервера.
+2	public Socket(InetAddress host, int port) throws IOException
+	Цей метод ідентичний попередньому конструктору, за винятком того, що хост позначається об'єктом InetAddress.
+3	public Socket(String host, int port, InetAddress localAddress, int localPort) throws IOException.
+	Підключається до вказаного хоста та порту, створюючи сокет на локальному хості за вказаною адресою та портом.
+4	public Socket(InetAddress host, int port, InetAddress localAddress, int localPort) throws IOException.
+	Цей метод ідентичний попередньому конструктору, крім того, що хост позначається об'єктом InetAddress замість рядка адреси.
+5	public Socket()
+	Створює непідключений сокет. Використовуйте метод connect() для підключення такого сокета до сервера.
+
+При поверненні конструктора Socket, він не просто створює екземпляр об'єкта сокету, але фактично намагається підключитися до вказаного сервера та порту.
+
+Деякі методи, що вивчають клас сокету, наведено тут. Зверніть увагу, що клієнт і сервер мають об'єкт сокету, тому ці методи можуть викликатися як клієнтом, так і сервером.
+
+
+		~Методи класу Socket
+№	Метод та опис
+1	public void connect(SocketAddress host, int timeout) throws IOException
+	Цей метод підключає сокет до зазначеного хоста. Цей метод необхідний лише під час створення екземпляра сокету з допомогою конструктора без аргументів.
+2	public InetAddress getInetAddress()
+	Цей метод повертає адресу іншого комп'ютера, до якого підключено цей сокет.
+3	public int getPort()
+	Повертає порт, до якого прив'язаний сокет на віддаленій машині.
+4	public int getLocalPort()
+	Повертає порт, до якого прив'язаний сокет на локальній машині.
+5	public SocketAddress getRemoteSocketAddress()
+	Повертає адресу віддаленого сокету.
+6	public InputStream getInputStream() throws IOException
+	Повертає потік вхідних даних сокету. Потік вхідних даних підключено до потоку вихідних даних віддаленого сокету.
+7	public OutputStream getOutputStream() throws IOException
+	Повертає потік вихідних даних сокету. Потік вихідних даних підключено до потоку вхідних даних віддаленого сокету.
+8	public void close() throws IOException
+	Закриває сокет, що робить даний об'єкт сокета не здатним знову підключатися до будь-якого сервера.
+
+
+		~Методи класу InetAddress
+Цей клас представляє адресу Інтернет-протоколу (IP). Наступні корисні методи, які знадобляться при програмуванні сокетів, наведені нижче:
+
+№	та опис
+1	static InetAddress getByAddress(byte[] addr)
+	Повертає об'єкт InetAddress з урахуванням необробленої IP-адреси.
+2	static InetAddress getByAddress(String host, byte[] addr)
+	Створює InetAddress на основі наданого імені хоста та IP-адреси.
+3	static InetAddress getByName(String host)
+	Визначає IP-адресу хоста, враховуючи ім'я хоста.
+4	String getHostAddress()
+	Повертає рядок IP-адреси у текстовій формі.
+5	String getHostName()
+	Отримує ім'я хоста для даної IP-адреси.
+6	static InetAddress InetAddress getLocalHost()
+	Повертає локальний хост.
+7	String toString()
+	Конвертує цю IP-адресу в адресний рядок.
+
+
+	~Приклад Socket Client
+Наступна GreetingClient – ​​це клієнтська програма, яка підключається до сервера за допомогою сокету, відправляє вітання, а потім чекає на відповідь.
+
+// Назва файлу GreetingClient.java
+import java.net.*;
+import java.io.*;
+
+public class GreetingClient {
+
+   public static void main(String [] args) {
+      String serverName = args[0];
+      int port = Integer.parseInt(args[1]);
+      try {
+         System.out.println("Підключення до " + serverName + " на порт " + port);
+         Socket client = новий Socket(serverName, port);
+         
+         System.out.println("Просто підключається до" + client.getRemoteSocketAddress());
+         OutputStream outToServer = client.getOutputStream();
+         DataOutputStream out = New DataOutputStream(outToServer);
+         
+         out.writeUTF("Привіт з" + client.getLocalSocketAddress());
+         InputStream inFromServer = client.getInputStream();
+         DataInputStream in = new DataInputStream(inFromServer);
+         
+         System.out.println("Сервер відповів" + in.readUTF());
+         client.close();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+}
+
+
+		~Приклад Socket Server
+Наступна програма GreetingServer є прикладом серверної програми, яка використовує клас сокету для прослуховування клієнтів за номером порту, вказаним у аргументі командної рядки.
+
+// Назва файлу GreetingServer.java
+import java.net.*;
+import java.io.*;
+
+public class GreetingServer extends Thread {
+   private ServerSocket serverSocket;
+   
+   public GreetingServer(int port) throws IOException {
+      serverSocket = новий ServerSocket(port);
+      serverSocket.setSoTimeout(10000);
+   }
+
+   public void run() {
+      while(true) {
+         try {
+            System.out.println("Чекання клієнта на порт" +
+               serverSocket.getLocalPort() + "...");
+            Socket server = serverSocket.accept();
+            
+            System.out.println("Просто підключається до " + server.getRemoteSocketAddress());
+            DataInputStream in = new DataInputStream(server.getInputStream());
+            
+            System.out.println(in.readUTF());
+            DataOutputStream out = New DataOutputStream(server.getOutputStream());
+            out.writeUTF("Дякую за підключення до " + server.getLocalSocketAddress()
+               + "Поки!");
+            server.close();
+            
+         } catch (SocketTimeoutException s) {
+            System.out.println("Час сокету минув!");
+            break;
+         } catch (IOException e) {
+            e.printStackTrace();
+            break;
+         }
+      }
+   }
+   
+   public static void main(String [] args) {
+      int port = Integer.parseInt(args[0]);
+      try {
+         Thread t = новий GreetingServer(port);
+         t.start();
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+}
+
+Скомпілюйте клієнт і сервер, а потім запустіть сервер таким чином:
+
+$ java GreetingServer 6066
+Очікування клієнта на порт 6066...
+
+Перевірте програму клієнта таким чином:
+
+$ java GreetingClient localhost 6066
+Підключення до localhost на порт 6066
+Просто підключається до localhost/127.0.0.1:6066
+Сервер відповів Дякую за підключення до /127.0.0.1:6066
+Поки що!
+
+
+
+		~Обробка URL
+URL-адреса позначає уніфікований покажчик ресурсу і представляє ресурс у Всесвітній комп'ютерній мережі, такий як веб-сторінка або каталог FTP (протокол пересилання файлів).
+У цьому розділі зазначено, як писати Java-програми, які взаємодіють із URL. URL може бути розбитий на частини, як зазначено нижче:
+
+protocol://host:port/path?query#ref
+
+Приклади протоколів включають HTTP (протокол передачі гіпертекстових файлів), HTTPS (протокол захищеної передачі гіпертекстової інформації), FTP та файлів. Шлях також називається ім'ям файлу, а хост називається повноваженням.
+Нижче наведена URL-адреса веб-сторінки, протоколом якої є HTTP:
+
+https://www.amrood.com/index.htm?language=en#j2se
+
+Зверніть увагу, що ця URL не вказує порт, і в цьому випадку використовується стандартний порт для протоколу. При HTTP порт за замовчуванням – 80.
+
+
+	~Конструктори класу URL
+Клас java.net.URL представляє URL і має повний набір методів управління URL в Java.
+
+Клас URL має кілька конструкторів для створення URL, включаючи такі:
+
+№	та опис
+1	загальнодоступна URL-адреса (протокол рядка, хост рядка, порт int, файл рядка) створює виключення MalformedURLException
+публічна URL-адреса (контекст URL-адреси, URL-адреса рядка) створює виключення MalformedURLEx
+2	Public URL(String protocol, String host, String file) throws MalformedURLException
+Ідентичний попередньому конструктору, за винятком того, що для цього протоколу використовується стандартний порт.
+3	public URL(String url) throws MalformedURLException
+Створює URL-адресу шляхом заданого адресного рядка.
+4	public URL(URL context, String url) throws MalformedURLException
+Створює URL, аналізуючи аргументи URL та адресного рядка.
+
+
+		~Методи класу URL
+Клас URL містить багато методів для доступу до різних частин представленого URL. Деякі з методів класу URL включають таке:
+
+№	та опис
+1	public String getPath()
+	Повертає шлях URL.
+2	public String getQuery()
+	Повертає частину запиту URL.
+3	public String getAuthority()
+	Повертає повноваження URL.
+4	public int getPort()
+	Повертає порт URL.
+5	public int getDefaultPort()
+	Повертає порт за промовчанням протоколу URL.
+6	public String getProtocol()
+	Повертає протокол URL.
+7	public String getHost()
+	Повертає хост URL.
+8	public String getHost()
+	Повертає хост URL.
+9	public String getFile()
+	Повертає ім'я файлу URL.
+10	public String getRef()
+	Повертає частину посилання URL.
+11	public URLConnection openConnection() throws IOException
+	Відкриває з'єднання з URL, дозволяючи клієнту взаємодіяти з ресурсом.
+	
+	Приклад
+Наступна програма URLDemo демонструє різні частини URL-адреси. URL вводиться в командному рядку, і програма URLDemo виводить дані кожної частини цього URL.
+
+Live Demo
+// Назва файлу: URLDemo.java
+import java.net.*;
+import java.io.*;
+
+public class URLDemo {
+
+   public static void main(String [] args) {
+      try {
+         URL url = new URL("https://www.amrood.com/index.htm?language=en#j2se");
+         
+         System.out.println("URL: " + url.toString());
+         System.out.println("протокол:" + url.getProtocol());
+         System.out.println("повноваження: + url.getAuthority());
+         System.out.println("ім'я файлу: " + url.getFile());
+         System.out.println("хост: " + url.getHost());
+         System.out.println("шлях: " + url.getPath());
+         System.out.println("порт: " + url.getPort());
+         System.out.println("порт за замовчуванням: " + url.getDefaultPort());
+         System.out.println("запит: " + url.getQuery());
+         System.out.println("посилання: " + url.getRef());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+}
+
+Пробний запуск цієї програми дасть наступний результат:
+
+URL: https://www.amrood.com/index.htm?language=en#j2se
+протокол: http
+повноваження: www.amrood.com
+ім'я файлу: /index.htm?language=en
+хост: www.amrood.com
+шлях: /index.htm
+порт: -1
+стандартний порт: 80
+запит: language=en
+посилання: j2se
+
+
+
+		~Методи класу URLConnection
+Метод openConnection() повертає java.net.URLConnection, абстрактний клас, підкласи якого є різними типами підключень URL.
+
+Наприклад:
+•Якщо ви підключаєтеся до URL, протокол якого HTTP, метод openConnection() повертає об'єкт підключення HttpURL.
+•Якщо ви підключаєтеся до URL, який представляє файл JAR (архівний файл програми на Java), метод openConnection() повертає об'єкт підключення JarURL і т.д.
+
+У класі підключення URL є багато методів для встановлення або визначення інформації про з'єднання, включаючи такі:
+
+№	та опис
+1	Object getContent()
+	Отримує вміст цього URL-з'єднання.
+2	Object getContent(Class[] classes)
+	Отримує вміст цього URL-з'єднання.
+3	String getContentEncoding()
+	Повертає значення рядка заголовка з кодуванням вмісту.
+4	int getContentLength()
+	Повертає значення рядка заголовка з довжиною вмісту.
+5	String getContentType()
+	Повертає значення рядка заголовка з типом вмісту.
+6	int getLastModified()
+	Повертає значення рядка заголовка з останніми змінами.
+7	long getExpiration()
+	Повертає значення рядка заголовка, що перевищує довжину.
+8	long getIfModifiedSince()
+	Повертає значення поля ifModifiedSince цього об'єкта.
+9	public void setDoInput(boolean input)
+	Передає true (істина), щоб позначити, що з'єднання використовуватиметься для введення. Значення за промовчанням – true, тому що клієнти зазвичай зчитують із URL-з'єднання.
+10	public void setDoOutput(boolean output)
+	Передає true, щоб позначити, що з'єднання використовуватиметься для виведення. Значення за промовчанням - false (брехня), оскільки багато типів URL-адрес не підтримують запис.
+11	public InputStream getInputStream() throws IOException
+	Повертає потік вхідних даних URL-з'єднання для зчитування з ресурсу.
+12	public OutputStream getOutputStream() throws IOException
+	Повертає потік вихідних даних URL-з'єднання для запису на ресурс.
+13	public URL getURL()
+	Повертає URL, з яким пов'язаний даний об'єкт URL-з'єднання.
+
+	Приклад
+Наступна програма URLConnectionDemo підключається до URL-адреси, введеної з командної рядки.
+
+Якщо URL представляє ресурс HTTP, з'єднання перетворюється на HttpURL-з'єднання, і дані в ресурсі зчитуються по одній строчці за раз.
+
+// File Name : URLConnDemo.java
+import java.net.*;
+import java.io.*;
+
+public class URLConnDemo {
+
+   public static void main(String [] args) {
+      try {
+         URL url = new URL("https://www.amrood.com");
+         URLConnection urlConnection = url.openConnection();
+         HttpURLConnection connection = null;
+         if(urlConnection instanceof HttpURLConnection) {
+            connection = (HttpURLConnection) urlConnection;
+         }else {
+            System.out.println("Будь ласка, введіть HTTP URL.");
+            return;
+         }
+         
+         BufferedReader in = New BufferedReader(
+            new InputStreamReader(connection.getInputStream()));
+         String urlString = "";
+         String current;
+         
+         while((current = in.readLine()) != null) {
+            urlString += current;
+         }
+         System.out.println(urlString);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+   }
+}
+
+Пробний запуск цієї програми дасть наступний результат:
+
+$java URLConnDemo
+
+.....HTML-вміст домашньої сторінки amrood.com.....

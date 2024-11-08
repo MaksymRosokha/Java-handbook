@@ -1,0 +1,237 @@
+Надсилання Email з використанням Java-програми досить проста, але для початку на вашому комп'ютері повинні бути встановлені JavaMail API і Java Activation Framework (JAF).
+
+•Ви можете завантажити останню версію JavaMail (версія 1.2) з базового веб-сайту Java.
+•Ви можете завантажити останню версію JAF (версія 1.1.1) з базового веб-сайту Java.
+
+Завантажте та розархівуйте ці файли, у новостворених каталогах верхнього рівня ви виявите кілька jar-файлів для обох додатків. Вам необхідно додати файли mail.jar та activation.jar у ваш CLASSPATH.
+
+
+		~Надсилання Email
+Ось приклад відправлення в Java простого електронного листа з комп'ютера. Передбачається, що ваш локальний хост підключений до Інтернету і здатний надсилати електронну пошту.
+
+	Приклад
+// Назва файлу SendEmail.java
+
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
+
+public class SendEmail {
+
+   public static void main(String [] args) {
+      // Необхідно вказати адресу електронної пошти одержувача
+      String to = "abcd@gmail.com";
+
+      // Необхідно вказати адресу електронної пошти відправника
+      String from = "web@gmail.com";
+
+      // Припускаючи, що ви надсилаєте електронного листа з localhost
+      String host = "localhost";
+
+      // Отримати властивості системи
+      Properties properties = System.getProperties();
+
+      // Налаштувати поштовий сервер
+      properties.setProperty("mail.smtp.host", host);
+
+      // Отримання об'єкта Session за умовчанням
+      Session session = Session.getDefaultInstance(properties);
+
+      try {
+         // Створення об'єкта MimeMessage за умовчанням
+         MimeMessage message = New MimeMessage(session);
+
+         // Встановити Від: поле заголовка
+         message.setFrom(new InternetAddress(from));
+
+         // Встановити Кому: поле заголовка
+         message.addRecipient(Message.RecipientType.TO, новий InternetAddress(to));
+
+         // Встановити тему: поле заголовка
+         message.setSubject("Це тема листа!");
+
+         // Тепер установіть фактичне повідомлення
+         message.setText("Це актуальне повідомлення");
+
+         // Надіслати повідомлення
+         Transport.send(message);
+         System.out.println("Повідомлення успішно надіслано...");
+      } catch (MessagingException mex) {
+         mex.printStackTrace();
+      }
+   }
+}
+
+Скомпілюйте та запустіть цю програму, щоб відправити Email до Java:
+
+$ java SendEmail
+Повідомлення успішно відправлено....
+
+Якщо ви бажаєте надіслати електронного листа кільком одержувачам, то для вказівки кількох ID (ідентифікаторів) електронної пошти необхідно використовувати такі методи:
+
+void addRecipients(Message.RecipientType type, Address[] addresses)
+   throws MessagingException
+
+Нижче наведено опис параметрів:
+•type (тип) – Він буде встановлений у TO, CC або BCC. У цьому CC – це точна копія, а BCC – це чорнова копія. Приклад: RecipientType.TO (повідомлення. Тип одержувача. ТО)
+•addresses (адреси) - це масив адреси електронної пошти. Вам потрібно буде використовувати метод InternetAddress() (адреси в Інтернеті) при вказівці ID електронної пошти.
+
+
+		~Надсилання HTML Email
+Ось приклад надсилання електронного листа HTML з вашого комп'ютера. Передбачається, що ваш локальний хост підключений до Інтернету і здатний надсилати електронну пошту.
+
+Цей приклад дуже схожий на попередній, за винятком того, що ми використовуємо метод setContent() (налаштування вмісту) для встановлення вмісту, іншим аргументом якого є text/html, щоб вказати те, що вміст HTML включено в повідомлення.
+
+Використовуючи цей приклад, ви можете відправити такий великий HTML-контент, наскільки вам потрібно.
+	Приклад
+
+// Назва файлу SendHTMLEmail.java
+
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
+
+public class SendHTMLEmail {
+
+   public static void main(String [] args) {
+      // Необхідно вказати адресу електронної пошти одержувача
+      String to = "abcd@gmail.com";
+
+      // Необхідно вказати адресу електронної пошти відправника
+      String from = "web@gmail.com";
+
+      // Припускаючи, що ви надсилаєте електронного листа з localhost
+      String host = "localhost";
+
+      // Отримати властивості системи
+      Properties properties = System.getProperties();
+
+      // Налаштувати поштовий сервер
+      properties.setProperty("mail.smtp.host", host);
+
+      // Отримання об'єкта Session за умовчанням
+      Session session = Session.getDefaultInstance(properties);
+
+      try {
+         // Створення об'єкта MimeMessage за умовчанням
+         MimeMessage message = New MimeMessage(session);
+
+         // Встановити Від: поле заголовка.
+         message.setFrom(new InternetAddress(from));
+
+         // Встановити Кому: поле заголовка
+         message.addRecipient(Message.RecipientType.TO, новий InternetAddress(to));
+
+         // Встановити тему: поле заголовка
+         message.setSubject("Це тема листа!");
+
+         // Надішліть фактичне HTML-повідомлення будь-якого розміру
+         message.setContent("<h1>Це актуальне повідомлення</h1>", "text/html");
+
+         // Надіслати повідомлення
+         Transport.send(message);
+         System.out.println("Повідомлення успішно надіслано...");
+      } catch (MessagingException mex) {
+         mex.printStackTrace();
+      }
+   }
+}
+
+Скомпілюйте та запустіть цю програму, щоб надіслати електронний лист HTML:
+
+$java SendHTMLEmail
+Повідомлення успішно відправлено....
+
+
+
+		~Надсилання вкладення в електронному листі
+Ось приклад надсилання електронного листа із вкладенням із вашого комп'ютера. Передбачається, що ваш локальний хост підключений до Інтернету і здатний надсилати електронну пошту.
+	Приклад
+// File Name SendFileEmail.java
+
+import java.util.*;
+import javax.mail.*;
+import javax.mail.internet.*;
+import javax.activation.*;
+
+public class SendFileEmail {
+
+   public static void main(String [] args) {
+      // Необхідно вказати адресу електронної пошти одержувача
+      String to = "abcd@gmail.com";
+
+      // Необхідно вказати адресу електронної пошти відправника
+      String from = "web@gmail.com";
+
+      // Припускаючи, що ви надсилаєте електронного листа з localhost
+      String host = "localhost";
+
+      // Отримати властивості системи
+      Properties properties = System.getProperties();
+
+      // Налаштувати поштовий сервер
+      properties.setProperty("mail.smtp.host", host);
+
+      // Отримання об'єкта Session за умовчанням
+      Session session = Session.getDefaultInstance(properties);
+
+      try {
+         // Створення об'єкта MimeMessage за умовчанням
+         MimeMessage message = New MimeMessage(session);
+
+         // Встановити Від: поле заголовка
+         message.setFrom(new InternetAddress(from));
+
+         // Встановити Кому: поле заголовка
+         message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+
+         // Встановити тему: поле заголовка
+         message.setSubject("Це тема листа!");
+
+         // Створення частини повідомлення
+         BodyPart messageBodyPart = новий MimeBodyPart();
+
+         // Заповнення повідомлення
+         messageBodyPart.setText("Це тіло повідомлення");
+         
+         // Створення складового повідомлення
+         Multipart multipart = новий MimeMultipart();
+
+         // Встановити частину текстового повідомлення
+         multipart.addBodyPart(messageBodyPart);
+
+         // Частина друга вкладення
+         messageBodyPart = новий MimeBodyPart();
+         String filename = "file.txt";
+         DataSource source = новий FileDataSource(filename);
+         messageBodyPart.setDataHandler(new DataHandler(source));
+         messageBodyPart.setFileName(filename);
+         multipart.addBodyPart(messageBodyPart);
+
+         // Надіслати повні частини повідомлення
+         message.setContent(multipart );
+
+         // Надіслати повідомлення
+         Transport.send(message);
+         System.out.println("Повідомлення успішно надіслано...");
+      } catch (MessagingException mex) {
+         mex.printStackTrace();
+      }
+   }
+}
+
+Скомпілюйте та запустіть цю програму, щоб надіслати електронний лист HTML:
+
+$java SendFileEmail
+Повідомлення успішно відправлено....
+
+
+		~Частина автентифікації користувача
+Якщо для аутентифікації потрібно надати ID користувача та пароль серверу електронної пошти, ви можете встановити ці властивості таким чином:
+
+props.setProperty("mail.user", "myuser");
+props.setProperty("mail.password", "mypwd");
+
+Решта механізму надсилання електронної пошти залишиться такою, як описано вище.
